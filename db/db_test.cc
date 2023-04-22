@@ -2359,26 +2359,34 @@ TEST_F(DBTest, Randomized) {
     if (db_snap != nullptr) db_->ReleaseSnapshot(db_snap);
   } while (ChangeOptions());
 }
-void find(const Slice_v &a)
+void find0(const Slice_v &a)
 {
-  std::string s = a.ToString();
   std::cout<<"data: "+a.ToString();
 }
+void find(const Slice_v &a)
+{
+  std::cout<<"data: "+a.ToString();
+  find0(a);
+}
+
 
 TEST_F(DBTest, Slice_vPuttest) {
     ModelDB model(CurrentOptions());
 
     Slice_v k =  Slice_v(0,1);
-//    Slice_v k2 = k;
+    Slice_v k2 = Slice_v(0,-1);
+    Slice_v k3 = Slice_v(2,1);
     Slice k1 = Slice("0|1");
     find(k);
     Slice v = Slice("test");
     ASSERT_LEVELDB_OK(model.Put(WriteOptions(),k , v));
     ASSERT_LEVELDB_OK(db_->Put(WriteOptions(), k, v));
-//    ASSERT_EQ("NOT_FOUND", Get("0|1"));
     ASSERT_EQ("test", Get("0|1"));
     ASSERT_LEVELDB_OK(model.Delete(WriteOptions(), k));
     ASSERT_LEVELDB_OK(db_->Delete(WriteOptions(), k));
+    ASSERT_EQ("NOT_FOUND", Get("0|1"));
+    ASSERT_EQ(true, k==k2);
+    ASSERT_EQ(false, k==k3);
 }
 
 }  // namespace leveldb

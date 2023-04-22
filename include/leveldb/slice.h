@@ -135,19 +135,18 @@ class LEVELDB_EXPORT Slice_v : public Slice {
 };
 
 inline bool operator==(Slice_v x, Slice_v& y) {
-  return (x.src() == y.src() && x.dst() == y.dst()) || x.dst() == -1 ||
-         y.dst() == -1;
+  return x.src() == y.src() && (x.dst() == y.dst() || x.dst() == -1 ||
+         y.dst() == -1);
 }
 
 inline bool operator!=(const Slice_v& x, const Slice_v& y) { return !(x == y); }
 
 inline int Slice_v::compare(const Slice_v& b) const {
-  return src_ == b.src_ ? dst_ < b.dst_ : src_ < b.src_;
-  //  if(src_<b.src_) return -1;
-  //  else if(src_>b.src_) return 1;
-  //  else if(dst_<b.dst_) return -1;
-  //  else if(dst_>b.dst_) return 1;
-  //  else  return 0;
+    if(src_<b.src_) return -1;
+    else if(src_>b.src_) return 1;
+    else if(dst_<b.dst_) return -1;
+    else if(dst_>b.dst_) return 1;
+    else  return 0;
 }
 }  // namespace leveldb
 
