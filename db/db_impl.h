@@ -38,6 +38,10 @@ class DBImpl : public DB {
   // Implementations of the DB interface
   Status Put(const WriteOptions&, const Slice& key,
              const Slice& value) override;
+  //lwh修改 2023/4/22 简单添加Slice_v
+  // Implementations of the DB interface
+  Status Put(const WriteOptions&,  Slice_v& key,
+             const Slice& value) override;
   Status Delete(const WriteOptions&, const Slice& key) override;
   Status Write(const WriteOptions& options, WriteBatch* updates) override;
   Status Get(const ReadOptions& options, const Slice& key,

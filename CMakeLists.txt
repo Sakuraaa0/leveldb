@@ -323,6 +323,7 @@ if(LEVELDB_BUILD_TESTS)
       "util/no_destructor_test.cc"
       "util/testutil.cc"
       "util/testutil.h"
+       #"app/main.cpp"
   )
   if(NOT BUILD_SHARED_LIBS)
     target_sources(leveldb_tests

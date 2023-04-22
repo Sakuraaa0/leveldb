@@ -2117,6 +2117,9 @@ class ModelDB : public DB {
   Status Put(const WriteOptions& o, const Slice& k, const Slice& v) override {
     return DB::Put(o, k, v);
   }
+  Status Put(const WriteOptions& o,  Slice_v& k, const Slice& v) override {
+    return DB::Put(o, k, v);
+  }
   Status Delete(const WriteOptions& o, const Slice& key) override {
     return DB::Delete(o, key);
   }
@@ -2355,6 +2358,29 @@ TEST_F(DBTest, Randomized) {
     if (model_snap != nullptr) model.ReleaseSnapshot(model_snap);
     if (db_snap != nullptr) db_->ReleaseSnapshot(db_snap);
   } while (ChangeOptions());
+}
+void find(Slice_v &a)
+{
+  std::string s = a.ToString();
+  std::cout<<"data: "+a.ToString();
+}
+void find0(Slice_v &a)
+{
+  find(a);
+}
+
+TEST_F(DBTest, Slice_vPuttest) {
+    ModelDB model(CurrentOptions());
+     Slice_v k =  Slice_v(0,1);
+     Slice_v k2 = k;
+    Slice k1 = Slice("0|1");
+     find0(k);
+    Slice v = Slice("test");
+    ASSERT_LEVELDB_OK(model.Put(WriteOptions(),k , v));
+    ASSERT_LEVELDB_OK(db_->Put(WriteOptions(), k, v));
+    ASSERT_EQ("NOT_FOUND", Get("0|1"));
+    ASSERT_LEVELDB_OK(model.Delete(WriteOptions(), k));
+    ASSERT_LEVELDB_OK(db_->Delete(WriteOptions(), k));
 }
 
 }  // namespace leveldb

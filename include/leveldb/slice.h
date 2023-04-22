@@ -85,7 +85,7 @@ class LEVELDB_EXPORT Slice {
     return ((size_ >= x.size_) && (memcmp(data_, x.data_, x.size_) == 0));
   }
 
- private:
+ protected://由于添加所加
   const char* data_;
   size_t size_;
 };
@@ -108,7 +108,42 @@ inline int Slice::compare(const Slice& b) const {
   }
   return r;
 }
+class LEVELDB_EXPORT Slice_v: public leveldb::Slice
+{
+ public:
+  Slice_v():Slice(),dst_(0),src_(0){}
+  Slice_v(int src,int dst):Slice(std::to_string(src)+'|'+std::to_string(dst)),src_(src),dst_(dst){}
+ // Slice_v& operator=(Slice_v&) = default;
+  /**
+  * 比较规则，有出度顶点进行排序若出度顶点相同由入度顶点进行排序
+  * @param b 比较元素
+  * @return// Three-way comparison.  Returns value:
+          //   <  0 iff "*this" <  "b",
+          //   == 0 iff "*this" == "b",
+          //   >  0 iff "*this" >  "b"
+  */
+  int compare(const Slice_v& b) const;
+  const int src() {return src_;}
+  const int dst(){return dst_;}
+ private:
+  int src_;
+  int dst_;
+};
+inline bool operator==( Slice_v x,  Slice_v& y) {
+  if((x.src() == y.src()&&x.dst() == y.dst())||x.dst() == -1||y.dst()==-1) return true;
+  else return false;
+}
 
+inline bool operator!=(const Slice_v& x, const Slice_v& y) { return !(x == y); }
+
+inline int Slice_v::compare(const Slice_v& b) const {
+  if(src_<b.src_) return -1;
+  else if(src_>b.src_) return 1;
+  else if(dst_<b.dst_) return -1;
+  else if(dst_>b.dst_) return 1;
+  else  return 0;
+}
 }  // namespace leveldb
+
 
 #endif  // STORAGE_LEVELDB_INCLUDE_SLICE_H_
