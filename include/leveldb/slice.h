@@ -106,6 +106,7 @@ inline int Slice::compare(const Slice& b) const {
     else if (size_ > b.size_)
       r = +1;
   }
+  if((data_[size_-2] == '-'&&memcmp(data_, b.data_, size_-3)==0)||(b.data_[b.size_-2] == '-'&&memcmp(data_, b.data_, b.size_-3)==0)) return 0;
   return r;
 }
 class LEVELDB_EXPORT Slice_v : public Slice {

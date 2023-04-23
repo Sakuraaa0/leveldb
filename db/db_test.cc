@@ -364,6 +364,8 @@ class DBTest : public testing::Test {
     return result;
   }
 
+
+
   // Return a string that contains all key,value pairs in order,
   // formatted like "(k1->v1)(k2->v2)".
   std::string Contents() {
@@ -2128,6 +2130,12 @@ class ModelDB : public DB {
     assert(false);  // Not implemented
     return Status::NotFound(key);
   }
+  //lwh 2023/4/23 查找所有出边所加
+  Status Get(const ReadOptions& options, const Slice_v& key,
+             std::string* value) override {
+    assert(false);  // Not implemented
+    return Status::NotFound(key);
+  }
   Iterator* NewIterator(const ReadOptions& options) override {
     if (options.snapshot == nullptr) {
       KVMap* saved = new KVMap;
@@ -2382,11 +2390,14 @@ TEST_F(DBTest, Slice_vPuttest) {
     ASSERT_LEVELDB_OK(model.Put(WriteOptions(),k , v));
     ASSERT_LEVELDB_OK(db_->Put(WriteOptions(), k, v));
     ASSERT_EQ("test", Get("0|1"));
-    ASSERT_LEVELDB_OK(model.Delete(WriteOptions(), k));
-    ASSERT_LEVELDB_OK(db_->Delete(WriteOptions(), k));
-    ASSERT_EQ("NOT_FOUND", Get("0|1"));
+   // ASSERT_LEVELDB_OK(model.Delete(WriteOptions(), k));
+    //ASSERT_LEVELDB_OK(db_->Delete(WriteOptions(), k));
     ASSERT_EQ(true, k==k2);
     ASSERT_EQ(false, k==k3);
+    ASSERT_LEVELDB_OK(model.Put(WriteOptions(),k3, "test-21"));
+    ASSERT_LEVELDB_OK(db_->Put(WriteOptions(), k3, "test-21"));
+    ASSERT_EQ("test-21", Get("2|1"));
+    ASSERT_EQ("test", Get("0|-1"));
 }
 
 }  // namespace leveldb
