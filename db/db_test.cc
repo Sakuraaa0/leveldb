@@ -2130,12 +2130,7 @@ class ModelDB : public DB {
     assert(false);  // Not implemented
     return Status::NotFound(key);
   }
-  //lwh 2023/4/23 查找所有出边所加
-  Status Get(const ReadOptions& options, const Slice_v& key,
-             std::string* value) override {
-    assert(false);  // Not implemented
-    return Status::NotFound(key);
-  }
+
   Iterator* NewIterator(const ReadOptions& options) override {
     if (options.snapshot == nullptr) {
       KVMap* saved = new KVMap;
